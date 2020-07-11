@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# PyTorch
+.pt
+
+## vscode
+.vscode/
+.vector_cache/

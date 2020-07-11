@@ -65,8 +65,8 @@ def train_adverisal(model, source_iterator, target_iterator, optim_task,optim_ke
             optim_task.step()
               
             optim_kernel.zero_grad()
-            loss =  - mloss-closs
-            loss.backward()
+            loss2 =  - mloss-closs
+            loss2.backward()
             optim_kernel.step()
             epoch_loss += loss.item()
             break

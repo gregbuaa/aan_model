@@ -70,15 +70,15 @@ class TextCNN(nn.Module):
         return self.fc(cat)
 
 
-### MLP-based ANN model for Amazon-Review Dataset.
-class ANNMLP(nn.Module):
-    def __init__(self,input_dim, latent_dim, output_dim, dropout = 0.5, version="ANN"):
+### MLP-based AAN model for Amazon-Review Dataset.
+class AANMLP(nn.Module):
+    def __init__(self,input_dim, latent_dim, output_dim, dropout = 0.5, version="AAN"):
         super().__init__()
         
         self.extractor = MLP(input_dim, latent_dim,dropout)
         self.predictor = MLP(latent_dim, output_dim,dropout=0.0)
         self.version = version
-        if self.version == 'ANN-A':
+        if self.version == 'AAN-A':
             self.mmd_linear = nn.Linear(latent_dim,latent_dim)
             self.cmmd_linear = nn.Linear(latent_dim,latent_dim)
 
@@ -89,23 +89,23 @@ class ANNMLP(nn.Module):
     def forward(self,text):
         latent = self.extractor(text) 
         task_prediction = self.predictor(latent)
-        if self.version == 'ANN':
+        if self.version == 'AAN':
             return latent, task_prediction
-        ### version == 'ANN-A'
+        ### version == 'AAN-A'
         else:
             mlatent = self.mmd_linear(latent)
             clatent = self.cmmd_linear(latent)
             return  latent, task_prediction, mlatent, clatent
 
 
-### TextCNN-based ANN for Amazon-Text.
-class ANNTextCNN(nn.Module):
-    def __init__(self,input_dim, embedding_dim, n_filters,filter_size,latent_dim, output_dim, pad_idx, dropout = 0.5,version='ANN'):
+### TextCNN-based AAN for Amazon-Text.
+class AANTextCNN(nn.Module):
+    def __init__(self,input_dim, embedding_dim, n_filters,filter_size,latent_dim, output_dim, pad_idx, dropout = 0.5,version='AAN'):
         super().__init__()
-
+        self.version = version
         self.extractor = TextCNN(input_dim, embedding_dim, n_filters,filter_size,latent_dim,dropout,pad_idx)
         self.predictor = MLP(latent_dim,output_dim,dropout=0.0)
-        if self.version == 'ANN-A':
+        if self.version == 'AAN-A':
             self.mmd_linear = nn.Linear(latent_dim,latent_dim)
             self.cmmd_linear = nn.Linear(latent_dim,latent_dim)
 
@@ -115,19 +115,20 @@ class ANNTextCNN(nn.Module):
     def forward(self,text):
         latent = self.extractor(text) 
         task_prediction = self.predictor(latent)
-        if self.version == 'ANN':
+        if self.version == 'AAN':
             return latent, task_prediction
-        ### version == 'ANN-A'
+        ### version == 'AAN-A'
         else:
             mlatent = self.mmd_linear(latent)
             clatent = self.cmmd_linear(latent)
             return  latent, task_prediction, mlatent, clatent
 
-### BertGRU-based ANN for Amazon-Text.
+### BertGRU-based AAN for Amazon-Text.
 class AANBertGRU(nn.Module):
-    def __init__(self, bert, hidden_dim, output_dim, n_layers, bidirectional, dropout,version='ANN'):
+    def __init__(self, bert, hidden_dim, output_dim, n_layers, bidirectional, dropout,version='AAN'):
         
         super().__init__()
+        self.version = version
         
         self.bert = bert
         
@@ -142,9 +143,9 @@ class AANBertGRU(nn.Module):
         
         self.extractor = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, hidden_dim)
         self.predictor = MLP(hidden_dim, output_dim,dropout=0.0)
-        if self.version == 'ANN-A':
-            self.mmd_linear = nn.Linear(latent_dim,latent_dim)
-            self.cmmd_linear = nn.Linear(latent_dim,latent_dim)
+        if self.version == 'AAN-A':
+            self.mmd_linear = nn.Linear(hidden_dim,hidden_dim)
+            self.cmmd_linear = nn.Linear(hidden_dim,hidden_dim)
 
 
         self.dropout = nn.Dropout(dropout)
@@ -193,9 +194,9 @@ class AANBertGRU(nn.Module):
         task_prediction = self.predictor(latent)
 
 
-        if self.version == 'ANN':
+        if self.version == 'AAN':
             return latent, task_prediction
-        ### version == 'ANN-A'
+        ### version == 'AAN-A'
         else:
             mlatent = self.mmd_linear(latent)
             clatent = self.cmmd_linear(latent)
