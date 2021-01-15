@@ -4,9 +4,8 @@ import numpy as np
 
 
 
-### compute MMD and  CMMD scores within the framework of Pytorch.
+### compute MMD and  CMD scores within the framework of Pytorch.
 ### we adopt Gaussian kernel with band width set to median pairwise squared distances.
-# on the training data
 class MMD_loss(nn.Module):
     def __init__(self, kernel_type='mmd', kernel_mul=2.0, kernel_num=5,eplison=0.001):
         super(MMD_loss, self).__init__()
@@ -64,33 +63,6 @@ class MMD_loss(nn.Module):
         # torch.cuda.empty_cache()
         return torch.sqrt(loss)
 
-    def rbf_class_mmd(self,sX,tX,sY,tY):
-        '''
-        Return the sum of all MMDs of different classes. (Non differentiable.)
-        '''
-
-        n_sample1 = sX.size(0)
-        n_sample2 = tX.size(0)
-        device = sX.device
-        batch_size = sX.size(0)
-
-        class_mmd = 0.0
-
-        label_num = torch.max(sY) + 1
-
-        for current_label in range(label_num):
-            current_sX = sX[sY==current_label]
-            current_tX = tX[tY==current_label]
-            if current_sX.size(0) == 0:
-                current_sX = torch.zeros(5, sX.size(1)).to(device)
-            if current_tX.size(0) == 0:
-                current_tX = torch.zeros(5, tX.size(1)).to(device)
-
-            class_mmd += self.rbf_mmd(current_sX,current_tX) 
-
-        return class_mmd
-
-
     def rbf_cmmd(self,sX,tX,sY,tY):
         '''
         Return CMMD score based on guassian kernel. 
@@ -145,3 +117,5 @@ if __name__ == "__main__":
 
     print(mmd_c(na,nb))
     print(cmmd_c(na,nb,ay,by))
+
+    
