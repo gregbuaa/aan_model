@@ -44,7 +44,7 @@ AANs can be extended to other different tasks such as Image Classification easil
 ```
 @inproceedings{zhang2021discriminative,
   title={Discriminative Feature Adaptation via Conditional Mean Discrepancy for Cross-domain Text Classification},
-  author={Zhang, Bo and Zhang, Xiaoming and Liu, Yun and Chen, Lei},
+  author={Zhang, Bo and Zhang, Xiaoming and Liu, Yun and Cheng, Lei},
   booktitle={International Conference on Database Systems for Advanced Applications (DASFAA)},
   year={2021}
 }
